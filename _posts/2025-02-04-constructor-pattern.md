@@ -14,7 +14,7 @@ approach. Let’s explore how the constructor pattern solves this.
 ---
 ## Traditional Deployment: The Limits of `stateInit`
 The standard deployment flow uses `stateInit` to compute a contract’s address and seed its storage. 
-For example, an NFT collection might initialize with:
+For example, an NFT collection might be initialized with:
 
 ```typescript
 const initialData = beginCell()
@@ -26,7 +26,6 @@ const initialData = beginCell()
 const init = { code, initialData };
 const collection = new NftCollection(contractAddress(workchain, init), init);
 await nftCollection.sendDeploy(provider.sender());
-}
 ```
 
 **Pros:**
@@ -36,9 +35,9 @@ await nftCollection.sendDeploy(provider.sender());
 
 **Cons:**
 - Requires all data upfront
-- No runtime validation and\or additional actions
+- No runtime validation and/or additional actions
 - Limited to static configurations
-
+---
 ## When Constructors Shine
 The constructor pattern becomes essential when:
 - Address pre-calculation is needed without full initialization data
@@ -53,10 +52,10 @@ body of the constructor message, the remainder of the constructor message
 is processed by a transaction (the creating transaction for smart contract η)
 by invoking TVM in a manner similar to that used for processing ordinary
 inbound messages
-
+---
 # Implementing the Constructor Pattern
 A common approach is to reserve one particular operation code (op) as the constructor call. 
-When your contract receives a message with that op, it executes the initialization routine.
+When your contract receives a message with this code, it executes the initialization routine.
 
 Below is an example of a constructor implementation:
 
@@ -115,12 +114,12 @@ Below is an example of a constructor implementation:
     ;; do something else
 }
 ```
-
+---
 ### Key Security Measures:
 1. `ds.end_parse()` ensures no residual data exists
 2. Sequence number (`store_uint(1, 64)`) blocks re-initialization
 
-Corresponding `ts` code for deployment of such a contract if following:
+The following code block shows how to operate with the presented `func` smart contract:
 ```typescript
 import {Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Dictionary, Sender, SendMode} from '@ton/core';
 
@@ -181,24 +180,24 @@ export class MyContract implements Contract {
     }
 }
 ```
-
+---
 ## Avoiding Common Pitfalls
 
 ### Replay Protection
 Code can prevent re-execution through state mutation. 
 The initial state (`owner_address` in our case) becomes irreversibly transformed to the desired form.
-If the post-deployment state matches the `virgin` one - it makes sense to introduce a specific 1-bit flag
-to make sure states don't match (so `ds.end_parse()` would raise an exception).
+If the post-deployment state matches the `virgin` state - it makes sense to introduce a specific 1-bit flag
+to make sure states no longer match (so `ds.end_parse()` would throw an exception).
 
 ### Unauthorized Constructor Call Protection 
 An actor deploying the contract must pass its own address as a part of `stateInit` data.
 In our example this is the only value being passed.
-Contract should throw an exception in case sender address does not match a persisted one.
-It's not required to store this address back if the contract's logic doesn't need it (ownerless contracts).
+The contract should throw an exception in case the sender's address does not match a persisted one.
+It's not required to store this address again if the contract's logic doesn't need it (ownerless contracts).
 
 ### Gas Considerations
 Constructor transactions might require a budgeting off-chain.
-Even if a deployment initiator pays fees separatly it's required to: 
+Even if a deployment's initiator pays fees separatly it is required to: 
 1. Keep some storage deposit on an account's balance.
 2. Manage the balance carefully in case of sending messages.
 
@@ -216,7 +215,7 @@ Even though deploy message is usually bouncable it can only bounce if the accoun
 > Throwing exceptions from constructor method doesn't automatically lead to an account destruction.
 {: .prompt-tip }
 
-If you need to implement a validation on-chain in a post-deployment constructor and destroy a smart-contract on the 
-validation failure - make sure you send a message back to the originator with `mode = 128` and `flag = 32`.
+If you need an on-chain validation in a post-deployment constructor and destroy a smart-contract on the 
+validation failure - send a message back to the originator with `mode = 128` and `flag = 32`, instead of throwing an exception.
 
 
