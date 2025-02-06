@@ -5,7 +5,6 @@ date: 2025-02-06 12:58 +0100
 categories: [funC, TON]
 tags: [pattern, collection]
 ---
-# Registry of Trust: Leveraging Collection Contracts for Secure Delegation in TON
 
 In decentralized applications, maintaining security and efficient state management is paramount. 
 This article presents a design used on the TON blockchain that employs a collection contract 

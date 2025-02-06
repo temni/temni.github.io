@@ -5,7 +5,6 @@ date: 2025-02-04 20:52 +0100
 categories: [funC, TON]
 tags: [pattern, constructor, deployment]
 ---
-# The Constructor Pattern: Flexible Initialization for TON Contracts
 
 In TON blockchain development, smart contracts are typically deployed with a predefined
 `stateInit` cell containing all initial code and data. 
