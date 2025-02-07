@@ -5,6 +5,13 @@ date: 2025-02-04 20:52 +0100
 categories: [funC, TON]
 tags: [pattern, constructor, deployment]
 ---
+<script type="text/javascript" src="/assets/highlight.min.js"></script>
+<script type="text/javascript" src="/assets/func.min.js"></script>
+<script type="text/javascript" src="/assets/typescript.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/atom-one-dark.css">
+<script type="text/javascript">
+  hljs.highlightAll();
+</script>
 
 In TON blockchain development, smart contracts are typically deployed with a predefined
 `stateInit` cell containing all initial code and data. 
@@ -15,8 +22,7 @@ approach. Let’s explore how the constructor pattern solves this.
 The standard deployment flow uses `stateInit` to compute a contract’s address and seed its storage. 
 For example, an NFT collection might be initialized with:
 
-```typescript
-const initialData = beginCell()
+<pre><code class="language-typescript">const initialData = beginCell()
   .storeAddress(ownerAddress)
   .storeUint(nextItemIndex, 64)
   .storeRef(nftItemCode)
@@ -25,7 +31,7 @@ const initialData = beginCell()
 const init = { code, initialData };
 const collection = new NftCollection(contractAddress(workchain, init), init);
 await nftCollection.sendDeploy(provider.sender());
-```
+</code></pre>
 
 **Pros:**
 - Straightforward address calculation
@@ -36,7 +42,7 @@ await nftCollection.sendDeploy(provider.sender());
 - Requires all data upfront
 - No runtime validation and/or additional actions
 - Limited to static configurations
----
+
 ## When Constructors Shine
 The constructor pattern becomes essential when:
 - Address pre-calculation is needed without full initialization data
@@ -51,15 +57,14 @@ body of the constructor message, the remainder of the constructor message
 is processed by a transaction (the creating transaction for smart contract η)
 by invoking TVM in a manner similar to that used for processing ordinary
 inbound messages
----
+
 # Implementing the Constructor Pattern
 A common approach is to reserve one particular operation code (op) as the constructor call. 
 When your contract receives a message with this code, it executes the initialization routine.
 
 Below is an example of a constructor implementation:
 
-```
-#include "stdlib.fc";
+<pre><code class="language-func">#include "stdlib.fc";
 
 ;; Constructor for on-chain initialization.
 () initialize_contract(slice sender, slice msg_data) impure inline {
@@ -112,15 +117,14 @@ Below is an example of a constructor implementation:
     }
     ;; do something else
 }
-```
+</code></pre>
 ---
 ### Key Security Measures:
 1. `ds.end_parse()` ensures no residual data exists
 2. Sequence number (`store_uint(1, 64)`) blocks re-initialization
 
 The following code block shows how to operate with the presented `func` smart contract:
-```typescript
-import {Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Dictionary, Sender, SendMode} from '@ton/core';
+<pre><code class="language-typescript">import {Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Dictionary, Sender, SendMode} from '@ton/core';
 
 export type MyContractConfig = {
   owner: Address
@@ -178,8 +182,10 @@ export class MyContract implements Contract {
         });
     }
 }
-```
+</code></pre>
+
 ---
+
 ## Avoiding Common Pitfalls
 
 ### Replay Protection

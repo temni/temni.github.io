@@ -1,10 +1,17 @@
 ---
 layout: post
-title: Registry of trust
+title: Registry Of Trust
 date: 2025-02-06 12:58 +0100
 categories: [funC, TON]
 tags: [pattern, collection]
 ---
+<script type="text/javascript" src="/assets/highlight.min.js"></script>
+<script type="text/javascript" src="/assets/func.min.js"></script>
+<script type="text/javascript" src="/assets/typescript.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/atom-one-dark.css">
+<script type="text/javascript">
+  hljs.highlightAll();
+</script>
 
 In decentralized applications, maintaining security and efficient state management is paramount. 
 This article presents a design used on the TON blockchain that employs a collection contract 
@@ -27,8 +34,7 @@ Below are two key functions from the collection contract used to forward message
 
 ### 1. Conveying from an Item Contract (C) to the Main Contract (A)
 
-```
-;; Forwards any message received from an item contract to the main contract with security checks
+<pre><code class="language-func">;; Forwards any message received from an item contract to the main contract with security checks
 () conveyToA(slice sender_address, slice msg_body, int query_id) impure inline {
     ;; parse the message body
     var (index, method, data) = (msg_body~load_uint(50), msg_body~load_uint(32), msg_body~load_ref());
@@ -60,7 +66,7 @@ Below are two key functions from the collection contract used to forward message
         .end_cell(), 
         64);
 }
-```
+</code></pre>
 
 #### Explanation
 - The function extracts an index, method, and data from the incoming message slice.
@@ -72,8 +78,7 @@ Below are two key functions from the collection contract used to forward message
 - Outbound message has same query_id for tracing
 
 ### 2. Conveying from the Main Contract (A) to an Item Contract (C)
-```
-;; Forwards a message from the main contract to an item contract based on its index
+<pre><code class="language-func">;; Forwards a message from the main contract to an item contract based on its index
 () conveyToC(slice sender_address, slice msg_body, int query_id) impure inline {
     ;; parse the message body
     var (index, method, data) = (msg_body~load_uint(50), msg_body~load_uint(32), msg_body~load_ref());
@@ -106,7 +111,7 @@ Below are two key functions from the collection contract used to forward message
         .end_cell(),
         64);
 }
-```
+</code></pre>
 
 #### Explanation
 - The function confirms that the message is indeed sent by the main contract.
@@ -117,8 +122,7 @@ Below are two key functions from the collection contract used to forward message
 ## Message Reception and Routing
 The main entry point for inbound messages in the collection contract is the recv_internal function. It handles messages as follows:
 
-```
-() recv_internal(cell in_msg_full, slice in_msg_body) impure {
+<pre><code class="language-func">() recv_internal(cell in_msg_full, slice in_msg_body) impure {
     if (in_msg_body.slice_empty?()) {
         return ();
     }
@@ -159,7 +163,7 @@ The main entry point for inbound messages in the collection contract is the recv
     }
     throw(error::unrecognized_op());
 }
-```
+</code></pre>
 
 ## Visualization
 ![img.png](../assets/registry-diagram.png)
