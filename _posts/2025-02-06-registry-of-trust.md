@@ -175,6 +175,21 @@ The main entry point for inbound messages in the collection contract is the recv
 - **Sender Address Verification**: Senders are rigorously authenticated.
 - **Immediate Error Handling**: Mismatches trigger immediate errors.
 
+## Additional gas considerations
+Transactions cost gas.
+An additional actor between two contracts increases the number of transactions by 1 for each communication case. 
+More transaction - more gas.
+Additionally, this registry requires some deposit to keep existing on the blockchain over time.
+
+The usage of this pattern will cost **0.0038 TON** per `A -> C` or `C -> A` interraction, roughly.
+
+## Demonstration
+I've prepared a reference implementation of this pattern.
+All mentioned contracts, their wrappers and a test can be found in [this repository](https://github.com/temni/registry-of-trust-showcase).
+A function of interests in contract `C` is a simple counter with a possibility to increase it by an arbitrary int32 value.
+
+> Among with this pattern a [constructor pattern](https://temni.github.io/posts/constructor-pattern/) is also used there.
+{: .prompt-tip }
 
 ## Conclusion
 The design presented here leverages a collection contract as a "Registry of Trust" to enable secure delegation between smart 

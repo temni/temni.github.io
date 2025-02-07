@@ -217,4 +217,17 @@ Even though deploy message is usually bouncable it can only bounce if the accoun
 If you need an on-chain validation in a post-deployment constructor and destroy a smart-contract on the 
 validation failure - send a message back to the originator with `mode = 128` and `flag = 32`, instead of throwing an exception.
 
+## Showcase implementation
+I've written a [showcase](https://github.com/temni/registry-of-trust-showcase) to demonstrate how constructor pattern 
+can benefit certain setups. 
+
+In this case it's used to overcome a circular dependencies between two constract on deploy:
+- Contract `A` stores a link to contract `B`
+- Contract `B` stores a link back to contract `A`
+
+It's not possible to deploy these contracts with links to each other with `stateInit` due to the chicken-and-egg problem::
+- each contract would have to have a calculated address of another one in its `stateInit` data. 
+- address of a contract depends on the data in `stateInit`
+
+An alternative would be having an operator account (owner) + setters for these fields. But out pattern allows to avoid it.
 
