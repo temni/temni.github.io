@@ -2,6 +2,8 @@
 layout: post
 title: Gas Consumption Tricks in TON FunC Contracts
 date: 2025-02-09 19:52 +0100
+categories: [funC, tolk, TON]
+tags: [gas]
 ---
 <script type="text/javascript" src="/assets/highlight.min.js"></script>
 <script type="text/javascript" src="/assets/func.min.js"></script>
